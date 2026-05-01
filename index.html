@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menu Scroll Pro</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #111;
+    color: white;
+    overflow-x: hidden;
+}
+
+.side-menu {
+    position: fixed;
+    top: 100px; /* زیر هدر */
+    left: 0;
+    width: 90px;
+    height: calc(100vh - 100px);
+
+    overflow-y: auto;
+    background: #000;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+
+    padding: 10px 5px;
+}
+
+.side-menu .category {
+    text-align: center;
+    cursor: pointer;
+}
+
+.side-menu img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #c59d5f;
+}
+
+.side-menu p {
+    font-size: 11px;
+}
+
+
+
+
+
+/* تب بالا */
+.categories {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 10px;
+    background: #000;
+}
+
+.category {
+    flex: 0 0 auto;
+    text-align: center;
+    cursor: pointer;
+}
+
+.category img {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+}
+
+.category p {
+    font-size: 12px;
+}
+
+/* اسکرول عمودی */
+
+.menu-container {
+   height: calc(100vh - 100px);
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+
+    display: none; /* فقط active دیده بشه */
+
+    padding-top: 35vh;
+    padding-bottom: 35vh;
+
+     margin-left: 90px; /* جا برای ساید منو */
+     margin-top: 180px; /* 100 هدر + حدود 80 special */
+      scroll-behavior: smooth;
+}
+
+
+.menu-container.active {
+    display: block; 
+      margin-top: 180px;
+
+
+
+}
+
+/* آیتم */
+
+
+.menu-item {
+    scroll-snap-align: center;
+
+    margin: 10px 0;
+    border-radius: 18px;
+    overflow: visible;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    transform: scale(0.85);
+    opacity: 0.5;
+
+    transition: transform 0.3s ease, opacity 0.3s ease;
+
+    will-change: transform;
+}
+
+.menu-item.active {
+    transform: scale(1.15);
+    opacity: 1;
+    z-index: 10;
+}
+
+.menu-item img {
+    width: 100%;
+    height: 120px;
+
+    object-fit: contain;
+    background: transparent;
+
+    border-radius: 14px;
+}
+
+
+
+/* متن */
+.menu-title {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.menu-info {
+    width: 90%;
+    margin-top: 6px;
+
+    padding: 8px 10px;
+    border-radius: 12px;
+
+    background: linear-gradient(145deg, #1c1c1c, #111);
+    border: 1px solid rgba(197,157,95,0.25);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    position: relative;
+    z-index: 5;
+}
+
+.menu-info .title {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 3px;
+    color: white;
+}
+
+.menu-info .price {
+    font-size: 12px;
+    font-weight: bold;
+    color: #c59d5f;
+}
+
+
+.menu-item.active .menu-info {
+    transform: scale(1.05);
+    background: linear-gradient(145deg, #2a2a2a, #111);
+}
+
+
+.header {
+    position: relative;
+    height: 100px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.header img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.header-overlay {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+}
+
+.header-overlay h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.header-overlay p {
+    margin: 5px 0 0;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* یه لایه تیره برای خوانایی بهتر */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    z-index: 10;
+}
+
+
+
+.special {
+    position: fixed;
+    top: 100px;
+    left: 90px;
+    right: 0;
+
+    display: flex;
+    gap: 10px;
+
+    padding: 10px;
+    background: #1a1a1a;
+    z-index: 9;
+}
+
+/* 🔥 بخش اصلی پیشنهاد */
+.offer-main {
+    flex: 2;
+    position: relative;
+    height: 80px;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.offer-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.7);
+}
+
+.offer-main .text {
+    position: absolute;
+    bottom: 8px;
+    left: 10px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* 🔲 دو مربع کوچک */
+.offer-mini {
+    flex: 1;
+    display: flex;
+    gap: 8px;
+}
+
+.mini {
+    flex: 1;
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    height: 80px;
+}
+
+.mini img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.75);
+}
+
+.mini p {
+    position: absolute;
+    bottom: 5px;
+    left: 6px;
+    font-size: 10px;
+    color: white;
+    font-weight: bold;
+}
+
+.offer-mini .price {
+    background: #c59d5f;
+    color: black;
+    padding: 3px 8px;
+    border-radius: 8px;
+}
+
+
+
+
+</style>
+</head>
+
+<body>
+
+
+<div class="header">
+    <img src="https://image2url.com/r2/default/images/1775846663237-91177d35-3d7c-4ebd-9835-8a32a4367fe7.jpg">
+</div>
+
+<!-- 🔥 بخش جدید: پیشنهاد ویژه -->
+<div class="special">
+
+    <div class="offer-main">
+        <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93">
+        <div class="text">
+            <h2> günün spesiyal</h2>
+        </div>
+    </div>
+
+    <div class="offer-mini">
+        <div class="mini">
+            <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93">
+            <p>Surprise</p>
+        </div>
+
+        <div class="mini">
+            <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93">
+            <p>Deal</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- ساید منو -->
+<div class="side-menu">
+    <div class="category" onclick="showMenu('cold')">
+        <img src="https://www.image2url.com/r2/default/images/1776183585399-f30d727a-2a52-4835-bd19-5e03b9777aaf.jpg">
+        <p>Soğuk İçecekler</p>
+    </div>
+
+ <div class="category" onclick="showMenu('hot')">
+        <img src="https://www.image2url.com/r2/default/images/1776112471221-5f64b9e6-7a81-4ddb-be21-17430e59ff33.jpg">
+        <p> Sıcak Içecekler </p>
+    </div>
+
+     <div class="category" onclick="showMenu('special')">
+        <img src="https://www.image2url.com/r2/default/images/1776112734624-edaf13f6-254d-4ef6-8fed-26276637d0bb.jpg">
+        <p>Spesiyal</p>
+    </div>
+
+     <div class="category" onclick="showMenu('milkshake')">
+        <img src="https://www.image2url.com/r2/default/images/1776183668445-91ea7a0e-5a5b-4348-94af-0c4c66ad6a5e.jpg">
+        <p> Milkshake & Frappe </p>
+    </div>
+
+
+     <div class="category" onclick="showMenu('frozen')">
+        <img src="https://www.tastingtable.com/img/gallery/26-popular-frozen-cocktails-ranked-best-to-worst/l-intro-1684870196.jpg">
+        <p> Frozen </p>
+    </div>
+
+     <div class="category" onclick="showMenu('turkkahve')">
+        <img src="https://www.emlakhaberajansi.com/wp-content/uploads/2021/05/turk-kahvesi-kahve-8b75.jpg">
+        <p> Türk Kahveleri </p>
+    </div>
+
+     <div class="category" onclick="showMenu('cay')">
+        <img src="https://www.image2url.com/r2/default/images/1776182568690-324afab1-58bf-4102-8c28-483a903c9f61.jpg">
+        <p> Çay & Bitki </p>
+    </div>
+
+     <div class="category" onclick="showMenu('mesrub')">
+        <img src="https://image.posta.com.tr/i/posta/75/750x0/6772a64043571b6822ca467d.jpg">
+        <p> Mesrubatlar</p>
+    </div>
+
+     <div class="category" onclick="showMenu('fastfood')">
+        <img src="https://cdn.pixabay.com/photo/2024/07/03/13/23/burger-8869971_1280.jpg">
+        <p> Fast Food </p>
+    </div>
+
+     <div class="category" onclick="showMenu('izgara')">
+        <img src="https://www.gulyurt.com.tr/yuklemeler/2021/01/karisik-izgara-tabagi-rs-scaled.jpg">
+        <p> Izgara </p>
+    </div>
+
+     <div class="category" onclick="showMenu('tatli')">
+        <img src="https://img.freepik.com/premium-photo/piece-cake-with-cigar-cup-coffee_198067-751985.jpg">
+        <p> Tatlılar </p>
+    </div>
+
+     <div class="category" onclick="showMenu('nargila')">
+        <img src="https://iznajmizabavu.rs/wp-content/uploads/2023/04/close-up-hookah-ready-smoke-2.jpg">
+        <p> Nargıleler </p>
+    </div>
+
+</div> 
+
+
+
+
+
+<div id="cold" class="menu-container">
+
+
+    <div class="menu-item"><img src="https://imghosting.in/host/zqfi2g"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Ice Americano</span>  <span class="price">150 TL</span></div></div>
+
+<div class="menu-item"><img src="https://imghosting.in/host/k8lbcj"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Ice Mocha</span>  <span class="price">180 TL</span></div></div>
+
+<div class="menu-item"><img src="https://imghosting.in/host/5oybvv"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Ice Latte</span>  <span class="price">180 TL</span></div></div>
+
+<div class="menu-item"><img src="https://imghosting.in/host/czgtk8"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Ice Caramel Latte</span>  <span class="price">180 TL</span></div></div>
+
+
+<div class="menu-item"><img src="https://imghosting.in/host/qf8t90"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Ice Vanılya Latte</span>  <span class="price">180 TL</span></div></div>
+
+<div class="menu-item"><img src="https://imghosting.in/host/nt7nud"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Ice Cookıe Latte</span>  <span class="price">180 TL</span></div></div>
+
+<div class="menu-item"><img src="https://imghosting.in/host/h3avn8"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Ice Fındıklı Latte</span>  <span class="price">180 TL</span></div></div>
+
+<div class="menu-item"><img src="https://imghosting.in/host/8mzq6z"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Ice Caffe</span>  <span class="price">180 TL</span></div></div>
+
+<div class="menu-item"><img src="https://imghosting.in/host/1b4a6m"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Lımonata</span>  <span class="price">150 TL</span></div></div>
+
+
+
+</div>
+
+
+
+
+
+<!-- منو -->
+<div id="hot" class="menu-container active">
+    <div class="menu-item"><img src="https://cdn.shopify.com/s/files/1/0319/0764/3436/products/iced-matcha-green-tea-latte.png?v=1597107623"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Espresso</span>  <span class="price"> 100 TL</span></div></div>
+
+    <div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776019801135-e2e7f7a8-da5d-4961-9f00-fe93a2bbbc6b.png"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Americano</span>  <span class="price">150 TL</span></div></div>
+
+    <div class="menu-item"><img src="https://cdn.shopify.com/s/files/1/0319/0764/3436/products/iced-matcha-green-tea-latte.png?v=1597107623"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Cappucino </span>  <span class="price">170 TL</span></div></div>
+
+    <div class="menu-item"><img src="https://imghosting.in/host/l1h3t2"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Latte</span>  <span class="price">170 TL</span></div></div>
+
+    <div class="menu-item"><img src="https://cdn.shopify.com/s/files/1/0319/0764/3436/products/iced-matcha-green-tea-latte.png?v=1597107623"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Mocha</span>  <span class="price">170 TL</span></div></div>
+
+
+    <div class="menu-item"><img src="https://cdn.shopify.com/s/files/1/0319/0764/3436/products/iced-matcha-green-tea-latte.png?v=1597107623"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Wıthe Mocha</span>  <span class="price">170 TL</span></div></div>
+
+    <div class="menu-item"><img src="https://imghosting.in/host/7d83lf"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Caramel Latte </span>  <span class="price">170 TL</span></div></div>
+
+    <div class="menu-item"><img src="https://imghosting.in/host/l4rn2b"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Vanilya Latte</span>  <span class="price">170 TL</span></div></div>
+
+    <div class="menu-item"><img src="https://imghosting.in/host/0w09in"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title"> Fındıklı Latte</span>  <span class="price">170 TL</span></div></div>
+
+    <div class="menu-item"><img src="https://imghosting.in/host/pa4dta"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Cookıe Latte</span>  <span class="price">170 TL</span></div></div>
+
+
+    <div class="menu-item"><img src="https://cdn.shopify.com/s/files/1/0319/0764/3436/products/iced-matcha-green-tea-latte.png?v=1597107623"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Sıcak Çıkolata </span>  <span class="price">180 TL</span></div></div>
+
+    <div class="menu-item"><img src="https://cdn.shopify.com/s/files/1/0319/0764/3436/products/iced-matcha-green-tea-latte.png?v=1597107623"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Beyaz Sıcak Çıkolata </span>  <span class="price">180 TL</span></div></div>
+
+
+    <div class="menu-item"><img src="https://cdn.shopify.com/s/files/1/0319/0764/3436/products/iced-matcha-green-tea-latte.png?v=1597107623"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Fıltre Kahve </span>  <span class="price">170 TL</span></div></div>
+
+
+    <div class="menu-item"><img src="https://cdn.shopify.com/s/files/1/0319/0764/3436/products/iced-matcha-green-tea-latte.png?v=1597107623"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Salep </span>  <span class="price">150 TL</span></div></div>
+</div>
+
+
+
+
+
+
+
+
+
+<div id="special" class="menu-container">
+
+
+    <div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776195697166-f254c330-dff3-4787-9dfc-47899604da5e.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Affogato</span>  <span class="price">250 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776195697166-f254c330-dff3-4787-9dfc-47899604da5e.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Cafe Glase</span>  <span class="price">300 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776196170667-36cf9725-c6e7-4ea6-93f6-34fddd6933ba.png"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Portakal Glase</span>  <span class="price">300 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776198147209-0a3c4ced-6ca4-4045-a5ca-d8f16b717f8a.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Dondurmalı Havuç Suyu</span>  <span class="price">300 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776198147209-0a3c4ced-6ca4-4045-a5ca-d8f16b717f8a.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Dondurmalı kavun Suyu</span>  <span class="price">300 TL</span></div></div>
+
+</div>
+
+
+
+
+<div id="milkshake" class="menu-container">
+
+
+    <div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776186203866-2d8ca69d-afe9-4ecb-af2f-051a8a5444ce.png"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Oreo </span>  <span class="price">220 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Caramel Milkshake</span>  <span class="price">220 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Çilekli Milkshake</span>  <span class="price">220TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Vanilya Milkshake</span>  <span class="price">220 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Çikolatlı Milkshake</span>  <span class="price">220 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Muzlu Milkshake</span>  <span class="price">220 TL</span></div></div>
+
+
+</div>
+
+
+
+
+
+<div id="frozen" class="menu-container">
+
+
+    <div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776186203866-2d8ca69d-afe9-4ecb-af2f-051a8a5444ce.png"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Mango Frozen</span>  <span class="price">200 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Karpuzlu Frozen</span>  <span class="price">200 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Kavunlu Frozen</span>  <span class="price">200 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Çilekli Frozen</span>  <span class="price">200 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Yeşil Elma Frozen</span>  <span class="price">200 TL</span></div></div>
+</div>
+
+
+
+<div id="turkkahve" class="menu-container">
+
+
+    <div class="menu-item"><img src="https://www.emlakhaberajansi.com/wp-content/uploads/2021/05/turk-kahvesi-kahve-8b75.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Türk Kahvesi</span>  <span class="price">80 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Dibek</span>  <span class="price">100 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Damla Sakızlı </span>  <span class="price">100 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Sütlu Türk Kahvesi</span>  <span class="price">100 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Menengiç Kahvesi</span>  <span class="price">100 TL</span></div></div>
+
+
+</div>
+
+
+
+
+
+<div id="cay" class="menu-container">
+
+
+    <div class="menu-item"><img src="https://www.jinfiniti.com/wp-content/uploads/2025/02/146.png"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Çay</span>  <span class="price">80 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Fıncan Çay</span>  <span class="price">70 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Kış Çay</span>  <span class="price">200 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Ada Çay</span>  <span class="price">200 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Yeşil Çay</span>  <span class="price">200 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Zencefılı Çay</span>  <span class="price">200 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Elma Çay</span>  <span class="price">200 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Ginseng Çay</span>  <span class="price">200 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Papatya Çay</span>  <span class="price">200 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Orman Meyvali Çay</span>  <span class="price">200 TL</span></div></div>
+
+</div>
+
+
+
+
+<div id="mesrub" class="menu-container">
+
+
+    <div class="menu-item"><img src="https://www.vanikoy.com.tr/templates/food/upload/images/applicationgallery/2220x920/lemoncup.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Su</span>  <span class="price">20 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Kola</span>  <span class="price">80 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Fanta</span>  <span class="price">80 TL</span></div></div>
+
+
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Ayran</span>  <span class="price">80 TL</span></div></div>
+
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Sade Soda</span>  <span class="price">50 TL</span></div></div>
+
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Meyveli Soda (Narli,Limonlu,Elma,Karpuz Çılek)</span>  <span class="price">60 TL</span></div></div>
+
+
+
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Churchill</span>  <span class="price">100 TL</span></div></div>
+
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Red Bull</span>  <span class="price">150 TL</span></div></div>
+
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Ice Tea (Şeftalı,Limon)</span>  <span class="price">100 TL</span></div></div>
+
+
+</div>
+
+
+
+<div id="fastfood" class="menu-container">
+
+
+    <div class="menu-item"><img src="https://images.ctfassets.net/rric2f17v78a/ZaxUdavlSPFJ2C3T0ynCG/2795abc597c83a69e468dea41c305c0a/Fast-Food.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Hamburger</span>  <span class="price">380 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Cheese Burger</span>  <span class="price">400 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Chicken Burger</span>  <span class="price">350 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Crispy Chicken Strips</span>  <span class="price">450 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Spicy Chicken Strips</span>  <span class="price">450 TL</span></div></div>
+
+<div class="menu-item"><img src="https://www.image2url.com/r2/default/images/1776113022599-46d5944a-0df2-4b9d-ba6b-1a8e6d3b439c.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Patates Kızartması</span>  <span class="price">250 TL</span></div></div>
+
+
+</div>
+
+
+
+<div id="izgara" class="menu-container">
+
+
+    <div class="menu-item"><img src="https://imghosting.in/host/rzd39k"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Izgara Köfte</span>  <span class="price">550 TL</span></div></div>
+
+<div class="menu-item"><img src="https://imghosting.in/host/1drgd3"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Izgara Tavuk</span>  <span class="price">500 TL</span></div></div>
+
+
+
+</div>
+
+
+
+<div id="tatli" class="menu-container">
+
+
+    <div class="menu-item"><img src="https://imghosting.in/host/s70lbg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Tiramisu Pasta</span>  <span class="price">220 TL</span></div></div>
+
+<div class="menu-item"><img src="https://imghosting.in/host/qbln4i"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Frambuazlı Pasta</span>  <span class="price">230 TL</span></div></div>
+
+<div class="menu-item"><img src="https://imghosting.in/host/dhngul"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Limonlu Pasta</span>  <span class="price">230 TL</span></div></div>
+
+<div class="menu-item"><img src="https://imghosting.in/host/sn309j"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Orman Meyveli Pasta</span>  <span class="price">270 TL</span></div></div>
+
+<div class="menu-item"><img src="https://imghosting.in/host/pwvudb"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Latte Mono Pasta</span>  <span class="price">270 TL</span></div></div>
+
+<div class="menu-item"><img src="https://imghosting.in/host/nfbir2"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Çilekli Mono Pasta</span>  <span class="price">270 TL</span></div></div>
+
+<div class="menu-item"><img src="https://imghosting.in/host/myc87a"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Kalpi Pasta</span>  <span class="price">270 TL</span></div></div>
+
+</div>
+
+
+
+
+<div id="nargila" class="menu-container">
+
+
+    <div class="menu-item"><img src="https://www.n-um.com/wp-content/uploads/2022/11/mhnqmmvz4e.jpg"  loading="lazy" decoding="async" width="400" height="300"><div class="menu-info"> <span class="title">Nargila</span>  <span class="price">380 TL <br>Adalya <br>Lady Killer<br>Love 66<br>pişmiş Şeftali<br>Izmir Romantik<br>Jibir<br>Dejavü<br>Plombir<br>İnferno<br>Mastik<br>Al Faker<br> Ananas <br>Capi<br>Üzüm <br>Sakız <br> Nane      </span></div></div>
+
+
+
+</div>
+
+
+<script>
+
+// تغییر منو
+function showMenu(id) {
+    document.querySelectorAll('.menu-container').forEach(el => {
+        el.classList.remove('active');
+    });
+
+    const activeMenu = document.getElementById(id);
+    activeMenu.classList.add('active');
+
+    updateActive();
+}
+
+// پیدا کردن آیتم وسط و فعال کردنش
+function updateActive() {
+    const activeMenu = document.querySelector('.menu-container.active');
+    if (!activeMenu) return;
+
+    const items = activeMenu.querySelectorAll('.menu-item');
+
+    const header = document.querySelector('.header');
+    const special = document.querySelector('.special');
+
+    const offset = header.offsetHeight + special.offsetHeight;
+    const viewportHeight = window.innerHeight;
+
+    const center = offset + (viewportHeight - offset) / 2;
+
+    let closest = null;
+    let minDistance = Infinity;
+
+    items.forEach(item => {
+        const rect = item.getBoundingClientRect();
+        const itemCenter = rect.top + rect.height / 2;
+
+        const distance = Math.abs(center - itemCenter);
+
+        item.classList.remove('active');
+
+        if (distance < minDistance) {
+            minDistance = distance;
+            closest = item;
+        }
+    });
+
+    if (closest) {
+        closest.classList.add('active');
+    }
+}
+
+// بهینه‌سازی اسکرول
+let ticking = false;
+
+function onScroll() {
+    if (!ticking) {
+        window.requestAnimationFrame(() => {
+            updateActive();
+            ticking = false;
+        });
+        ticking = true;
+    }
+}
+
+// اسکرول برای همه منوها
+function addScrollEvents() {
+    document.querySelectorAll('.menu-container').forEach(menu => {
+        menu.addEventListener('scroll', onScroll);
+    });
+}
+
+// کلیک روی آیتم (اصلاح شده و دقیق)
+
+
+
+function addClickEvents() {
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.onclick = () => {
+
+            const container = item.closest('.menu-container');
+
+            const header = document.querySelector('.header');
+            const special = document.querySelector('.special');
+
+            const headerHeight = header.offsetHeight;
+            const specialHeight = special.offsetHeight;
+
+            const containerRect = container.getBoundingClientRect();
+            const itemRect = item.getBoundingClientRect();
+
+            // مرکز واقعی (همونی که updateActive استفاده میکنه)
+            const offsetTop = headerHeight + specialHeight;
+            const viewportHeight = window.innerHeight;
+            const targetCenter = offsetTop + (viewportHeight - offsetTop) / 2;
+
+            const itemCenter = itemRect.top + itemRect.height / 2;
+
+            const move = itemCenter - targetCenter;
+
+            container.scrollBy({
+                top: move,
+                behavior: 'smooth'
+            });
+
+        };
+    });
+}
+
+
+
+
+
+
+// اجرا در لود
+window.addEventListener('load', () => {
+    addScrollEvents();
+    addClickEvents();
+    updateActive();
+});
+
+</script>
+
+
+</body>
+</html>
